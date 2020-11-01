@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0022: Użyj treści bloku dla metod
+csharp_style_expression_bodied_methods = false:none
