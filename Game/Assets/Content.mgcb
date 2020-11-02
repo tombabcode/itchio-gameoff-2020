@@ -13,3 +13,36 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/GO.txt
+/copy:Fonts/GO.txt
+
+#begin Fonts/Go-Bold.ttf
+/copy:Fonts/Go-Bold.ttf
+
+#begin Fonts/Go-Italic.ttf
+/copy:Fonts/Go-Italic.ttf
+
+#begin Fonts/Go-Regular.ttf
+/copy:Fonts/Go-Regular.ttf
+
+#begin Fonts/Standard.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Standard.spritefont
+
+#begin Fonts/StandardItalic.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/StandardItalic.spritefont
+
+#begin Fonts/Tiny.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Tiny.spritefont
+
