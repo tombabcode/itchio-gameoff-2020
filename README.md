@@ -12,11 +12,11 @@ Project for Game Off 2020 by Github on itch.io
 
 ## Game features
 
-- Multiple levels (Moons)
-- Boss fights
-- Combat system (Melee and ranged)
-- Procedurally generated world and mazes
-- Items and weapons
+-   Multiple levels (Moons)
+-   Boss fights
+-   Combat system (Melee and ranged)
+-   Procedurally generated world and mazes
+-   Items and weapons
 
 ## How to install
 
@@ -26,21 +26,23 @@ Soon
 
 ### Development
 
-* Map
-* Player
-* Combat system
-* Menus
+-   [ ] Map
+-   [ ] Player
+-   [ ] Combat system
+-   [ ] Menus
 
 ### Art
 
-* Concept art
+-   [ ] Concept art
 
 ### Sound design
 
-* Concenpt sound
+-   [ ] Concenpt sound
 
 ## Credits
 
 Software Developer: Tomasz Babiak [GitHub][https://github.com/tombabcode]
+
 Sound Designer: ASwan
+
 Art: Oliver F.
