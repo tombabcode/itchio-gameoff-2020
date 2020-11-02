@@ -7,8 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TBEngine.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Link="README.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,13 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TBEngine.dll">
+    <Resource Include="TBEngine.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\" />
+    </Resource>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

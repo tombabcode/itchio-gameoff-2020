@@ -30,6 +30,7 @@ Soon
 -   [ ] Player
 -   [ ] Combat system
 -   [ ] Menus
+-   [ ] Configuration
 
 ### Art
 

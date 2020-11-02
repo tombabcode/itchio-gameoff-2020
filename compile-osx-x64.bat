@@ -1,0 +1,1 @@
+dotnet publish ./Game/GameJam.csproj -c Release --runtime osx-x64 --output ./bin-osx-x64 -p:PublishSingleFile=true --no-self-contained

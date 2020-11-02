@@ -22,7 +22,17 @@ namespace GameJam {
         protected override void Initialize( ) {
             base.Initialize( );
 
+            _config = new ConfigurationService(_deviceMNG);
+            _config.LoadConfiguration( );
+
+            _deviceMNG.PreferredBackBufferWidth = _config.WindowWidth;
+            _deviceMNG.PreferredBackBufferHeight = _config.WindowHeight;
+            _deviceMNG.ApplyChanges( );
+
             _canvas = new SpriteBatch(GraphicsDevice);
+
+            _input = new InputService( );
+            _content = new ContentService(Content, GraphicsDevice, _canvas);
         }
 
         protected override void Update(GameTime gameTime) {
