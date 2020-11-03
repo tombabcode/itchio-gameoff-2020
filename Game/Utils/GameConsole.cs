@@ -1,32 +1,47 @@
-﻿using Microsoft.Xna.Framework;
-using TBEngine.Utils;
-using GameJam.Services;
-using TBEngine.Types;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using TBEngine.Models;
+using Microsoft.Xna.Framework;
+using GameJam.Services;
+using TBEngine.Utils.Elements;
+using TBEngine.Types;
 
 using DH = TBEngine.Utils.DisplayHelper;
 using COLOR = GameJam.Utils.ColorsManager;
 using LOG = TBEngine.Services.LogService;
 using TEXT = TBEngine.Utils.TextService;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace GameJam.Utils {
+    /// <summary>
+    /// In-game console
+    /// </summary>
     public sealed class GameConsole : GameConsoleBase {
 
-        private bool _typeWall;
+        // Services
         private ConfigurationService _config;
 
-        private int _width => Scene.Width;
-        private int _height => Scene.Height;
-        private int _offset => 17;
+        // Should display "|" sign that occures while typing
+        private bool _typeWall;
 
-        private SpriteFont _font => Content.GetFont(FontType.Tiny);
+        // Helpers
+        private SpriteFont Font => Content.GetFont(FontType.Tiny);
+        private Keys KEY_Console => _config.TryGet("key_console", out Keys key) ? key : Keys.OemTilde;
+        private int LineHeight => 17;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="input"><see cref="InputService"/></param>
+        /// <param name="content"><see cref="ContentService"/></param>
+        /// <param name="width">Width of the console</param>
+        /// <param name="height">Height of the console</param>
         public GameConsole(InputService input, ContentService content, ConfigurationService config, int width, int height) : base(input, content, width, height) {
             _config = config;
         }
 
+        /// <summary>
+        /// Update console's logic
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Update(GameTime time) {
             if (IsVisible) {
                 if (Input.IsKeyPressedOnce(Keys.Back) || Input.GetPressedKey(500) == Keys.Back)
@@ -34,8 +49,10 @@ namespace GameJam.Utils {
                 else if (Input.IsKeyPressedOnce(Keys.Enter) && Command.Length > 0) {
                     ExecuteCommand(Command);
                     Command = "";
-                } else
-                    Command += TextService.GetTextFromKeys(Input, new char[] { '`' });
+                } else {
+                    char? consoleKey = TEXT.GetCharacterFromKey(KEY_Console, Input);
+                    Command += TEXT.GetTextFromKeys(Input, consoleKey.HasValue ? new[] { consoleKey.Value } : null);
+                }
 
                 _typeWall = time.TotalGameTime.Milliseconds % 1000 >= 500;
             }
@@ -49,11 +66,11 @@ namespace GameJam.Utils {
                 return;
 
             DH.RenderScene(Scene, color: COLOR.DarkGray * .25f, logic: ( ) => {
-                DH.Box(0, _height, _width, 35, COLOR.DarkestGray, AlignType.LB);
-                DH.Line(0, _height - 35, _width, _height - 35, color: COLOR.DarkGray);
+                DH.Box(0, (int)Height, (int)Width, 35, COLOR.DarkestGray, AlignType.LB);
+                DH.Line(0, Height - 35, Width, Height - 35, color: COLOR.DarkGray);
 
                 // Command input
-                DH.Text(_font, $"Command: {Command}" + (_typeWall ? "|" : ""), new Vector2(10, _height - 10), false, COLOR.DarkGray, AlignType.LB);
+                DH.Text(Font, $"Command: {Command}" + (_typeWall ? "|" : ""), new Vector2(10, Height - 10), false, COLOR.DarkGray, AlignType.LB);
 
                 // Displaying logs
                 if (LOG.Logs.Count == 0)
@@ -65,8 +82,8 @@ namespace GameJam.Utils {
 
                     // Display message
                     if (!string.IsNullOrWhiteSpace(log.Message))
-                        foreach (string data in TEXT.GetDividedText(_font, $"[{log.CDate.ToLongTimeString( )}][{log.Type}]: {log.Message}", _width - 20, false))
-                            DH.Text(_font, data, new Vector2(10, 10 + (row++) * _offset), false, color);
+                        foreach (string data in TEXT.GetDividedText(Font, $"[{log.CDate.ToLongTimeString( )}][{log.Type}]: {log.Message}", Width - 20, false))
+                            DH.Text(Font, data, new Vector2(10, 10 + (row++) * LineHeight), false, color);
 
                     // Display exception
                     if (log.Exception == null)
@@ -78,8 +95,8 @@ namespace GameJam.Utils {
                     raw[0] = raw[0].Insert(0, $"[{log.CDate.ToLongTimeString( )}][{log.Type}]: ");
 
                     foreach (string data in raw)
-                        foreach (string displayData in TEXT.GetDividedText(_font, data, _width - 20, false))
-                            DH.Text(_font, displayData, new Vector2(10, 10 + (row++) * _offset), false, color);
+                        foreach (string displayData in TEXT.GetDividedText(Font, data, Width - 20, false))
+                            DH.Text(Font, displayData, new Vector2(10, 10 + (row++) * LineHeight), false, color);
                 });
             });
         }

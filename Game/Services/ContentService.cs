@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System.Linq;
 using System.IO;
-using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 using TBEngine.Services;
 using TBEngine.Types;
 
@@ -11,6 +11,7 @@ namespace GameJam.Services {
     /// </summary>
     public sealed class ContentService : ContentServiceBase {
 
+        // Local
         private SpriteFont _fontStandard;
         private SpriteFont _fontStandardItalic;
         private SpriteFont _fontTiny;
@@ -24,7 +25,7 @@ namespace GameJam.Services {
         public ContentService(ContentManager content, GraphicsDevice device, SpriteBatch canvas) : base(content, device, canvas) { }
 
         /// <summary>
-        /// Loads content
+        /// Loads app's content
         /// </summary>
         public override void LoadContent( ) {
             _fontTiny = Content.Load<SpriteFont>(Path.Combine("Fonts", "Tiny"));

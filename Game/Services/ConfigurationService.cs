@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using TBEngine.Services;
 
 namespace GameJam.Services {
@@ -7,16 +8,24 @@ namespace GameJam.Services {
     /// </summary>
     public sealed class ConfigurationService : ConfigurationServiceBase {
 
-        public int WindowWidth => TryGet("window_width", out int res) ? res : 1280;
-        public int WindowHeight => TryGet("window_height", out int res) ? res : 720;
+        // Const
+        public const int DEF_WindowWidth = 1280;
+        public const int DEF_WindowHeight = 720;
+        public const Keys DEF_KEY_Console = Keys.OemTilde;
+
+        // Helpers
+        public int WindowWidth => TryGet("window_width", out int res) ? res : DEF_WindowWidth;
+        public int WindowHeight => TryGet("window_height", out int res) ? res : DEF_WindowHeight;
+        public Keys KEY_Console => TryGet("key_console", out Keys res) ? res : DEF_KEY_Console;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="deviceMNG"><see cref="GraphicsDeviceManager"/></param>
         public ConfigurationService(GraphicsDeviceManager deviceMNG) : base(deviceMNG) {
-            Register("window_width", 1280);
-            Register("window_height", 720);
+            Register("window_width", DEF_WindowWidth);
+            Register("window_height", DEF_WindowHeight);
+            Register("key_console", DEF_KEY_Console);
         }
 
     }
