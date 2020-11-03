@@ -1,10 +1,7 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:..\bin\$(Configuration)\netcoreapp3.1\Assets
-/intermediateDir:..\obj\$(Configuration)\netcoreapp3.1\Assets
 /platform:DesktopGL
-/config:Debug
 /profile:Reach
 /compress:False
 

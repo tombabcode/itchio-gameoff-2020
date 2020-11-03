@@ -81,7 +81,7 @@ To turn on/off the console in-game you have to press tilde key (~)
 
 ## Credits
 
-Software Developer: Tomasz Babiak [GitHub][https://github.com/tombabcode]
+Software Developer: Tomasz Babiak [GitHub](https://github.com/tombabcode)
 
 Sound Designer: ASwan
 
