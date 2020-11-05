@@ -61,7 +61,7 @@ namespace GameJam.Utils {
                 IsVisible = !IsVisible;
         }
 
-        public override void Render( ) {
+        public override void Render(GameTime time) {
             if (!IsVisible)
                 return;
 

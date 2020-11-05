@@ -30,7 +30,7 @@ namespace GameJam.Views {
             _buttons.ForEach(button => button.Update(time));
         }
         
-        public override void Render( ) {
+        public override void Render(GameTime time) {
             DH.RenderScene(Scene, ( ) => {
                 DH.Box(32, 0, 256, (int)Height, ColorsManager.DarkGray * .25f);
 

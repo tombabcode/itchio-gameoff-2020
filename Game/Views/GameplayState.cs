@@ -30,17 +30,25 @@ namespace GameJam.Views {
 
         public void NewGame(string playerName = null) {
             _player = new Player(playerName ?? "Unknown");
-            _camera = new CameraService(0.25f, new Vector2(_config.WindowWidth / 2, _config.WindowHeight / 2));
+            _camera = new CameraService(0.25f, new Vector2(_config.WindowWidth / 2, _config.WindowHeight / 2)) {
+                MinScale = 0.20f,
+                MaxScale = 0.75f,
+                ScaleFactor = 0.05f
+            };
         }
 
         public override void Update(GameTime time) {
+            if (_input.HasScrolledDown( )) _camera.ZoomOut( );
+            if (_input.HasScrolledUp( )) _camera.ZoomIn( );
+
             _player.Update(_input, _config, time);
             _camera.Update( );
         }
 
-        public override void Render( ) {
+        public override void Render(GameTime time) {
             DH.RenderScene(GameplayScene, _camera, ( ) => {
-                DH.Raw(_content.TEXTest.Texture, (int)_player.PositionX, (int)_player.PositionY, align: AlignType.CB);
+                DH.Raw(_content.Pixel, _player.CollisionBounds.X + _player.PositionX, _player.CollisionBounds.Y + _player.PositionY, _player.CollisionBounds.Width, _player.CollisionBounds.Height, align: AlignType.CM);
+                DH.Raw(_content.TEXTest.Texture, _player.GetDisplayData(time, _content), align: AlignType.CB);
             });
 
             DH.RenderScene(Scene, ( ) => {

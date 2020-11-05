@@ -30,7 +30,7 @@ Project for [Game Off 2020 by Github](https://itch.io/jam/game-off-2020) on itch
 
 ### Development
 
-Progress: 14.81% (4 of 27 done)
+Progress: 12.50% (4 of 32 done)
 
 -   [ ] Map
 	- [ ] World interactions
@@ -60,19 +60,10 @@ Progress: 14.81% (4 of 27 done)
 -   [x] Translations system
 -   [x] Logging
 	- [x] Console
-
-### Art
-
-Progress: 0.00% (- of - done)
-
--   [ ] Concept art
-
-### Sound design
-
-Progress: 50.0% (1 of 2 done)
-
--   [x] Button hover sound
--   [ ] Button click sound
+-   [ ] Art
+	- [ ] Animation system
+-   [ ] Sound
+-   [ ] Music
 
 ## In-game commands
 
@@ -83,6 +74,8 @@ To turn on/off the console in-game you have to press tilde key (~)
 `exit` - Force quit. Closes the application immediately
 
 `newgame [username]` - Starts a new game. You can pass `[username]` parameter which set player's name. If parameter is not set, the `Unknown` username will be set
+
+`translate [key]` - Translate (using current set language) the key into word from Assets/Languages/<current>.json
 
 ## Credits
 

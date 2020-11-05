@@ -71,6 +71,7 @@ namespace GameJam {
             _console = new GameConsole(_input, _content, _config, _config.WindowWidth, Height);
             _console.SetAction("hide", 0, (args) => _console.IsVisible = false);
             _console.SetAction("exit", 0, (args) => Exit( ));
+            _console.SetAction("translate", 1, (args) => LogService.Add(TranslationService.Get(args[0]), LogType.Success));
             _console.SetAction("new_game", 0, (args) => {
                 _state.ChangeState(GameStateType.Gameplay);
                 ((GameplayState)_state.GetCurrentState( )).NewGame(args.Length >= 1 ? args[0] : null);
@@ -109,8 +110,8 @@ namespace GameJam {
         /// <param name="gameTime"><see cref="GameTime"/></param>
         protected override void Draw(GameTime gameTime) {
             // View renders
-            _console.Render( );
-            _state.GetCurrentState( ).Render( );
+            _console.Render(gameTime);
+            _state.GetCurrentState( ).Render(gameTime);
 
             // Display
             DH.RenderScene(null, ( ) => {
