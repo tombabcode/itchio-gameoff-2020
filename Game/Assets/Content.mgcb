@@ -1,3 +1,9 @@
+#begin Audio/UI/button_menu.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/UI/button_menu.mp3
+
 #begin Fonts/GO.txt
 /copy:Fonts/GO.txt
 
@@ -33,4 +39,16 @@
 
 #begin Languages/en.json
 /copy:Languages/en.json
+
+#begin Textures/Characters/test_texture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Characters/test_texture.png
 

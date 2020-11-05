@@ -71,6 +71,10 @@ namespace GameJam {
             _console = new GameConsole(_input, _content, _config, _config.WindowWidth, Height);
             _console.SetAction("hide", 0, (args) => _console.IsVisible = false);
             _console.SetAction("exit", 0, (args) => Exit( ));
+            _console.SetAction("new_game", 0, (args) => {
+                _state.ChangeState(GameStateType.Gameplay);
+                ((GameplayState)_state.GetCurrentState( )).NewGame(args.Length >= 1 ? args[0] : null);
+            });
 
             DH.Content = _content;
 
@@ -78,9 +82,11 @@ namespace GameJam {
 
             _state = new StateService( );
             _state.Register(GameStateType.MainMenu, new MainMenuState(_content, _input, _config, _console));
+            _state.Register(GameStateType.Gameplay, new GameplayState(_content, _input, _config));
             _state.ChangeState(GameStateType.MainMenu);
 
             TranslationService.LoadTranslations<LanguageModel>("en");
+            AudioHelper.SoundVolume = .25f;
 
             LogService.Add($"App ready, version {VERSION}", LogType.Info);
         }

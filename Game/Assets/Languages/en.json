@@ -3,6 +3,7 @@
 	"LanguageName": "English",
 	"Data": {
 		"Buttons": {
+			"new_game": "New game",
 			"exit_app": "Leave"
 		}
 	}

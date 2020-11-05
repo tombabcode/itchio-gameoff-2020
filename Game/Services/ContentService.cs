@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using TBEngine.Services;
 using TBEngine.Types;
+using TBEngine.Textures;
+using Microsoft.Xna.Framework.Audio;
 
 namespace GameJam.Services {
     /// <summary>
@@ -15,6 +17,10 @@ namespace GameJam.Services {
         private SpriteFont _fontStandard;
         private SpriteFont _fontStandardItalic;
         private SpriteFont _fontTiny;
+
+        public TextureStatic TEXTest { get; private set; }
+
+        public SoundEffect AUDIO_ButtonHover { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -31,6 +37,10 @@ namespace GameJam.Services {
             _fontTiny = Content.Load<SpriteFont>(Path.Combine("Fonts", "Tiny"));
             _fontStandard = Content.Load<SpriteFont>(Path.Combine("Fonts", "Standard"));
             _fontStandardItalic = Content.Load<SpriteFont>(Path.Combine("Fonts", "StandardItalic"));
+
+            TEXTest = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Characters", "test_texture")));
+
+            AUDIO_ButtonHover = Content.Load<SoundEffect>(Path.Combine("Audio", "UI", "button_menu"));
         }
 
         /// <summary>

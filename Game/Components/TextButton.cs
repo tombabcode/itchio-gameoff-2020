@@ -16,8 +16,9 @@ namespace GameJam.Components {
         }
 
         public override void Update(GameTime time) {
-            if (_input.HasSwitchedArea(X, Y, Width, Height)) {
-                IsHover = _input.IsOver(X, Y, Width, Height);
+            IsHover = _input.IsOver(X, Y, Width, Height);
+
+            if (_input.HasEnterArea(X, Y, Width, Height)) {
                 OnHover?.Invoke( );
             }
 
