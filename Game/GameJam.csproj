@@ -9,10 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,9 +27,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="mgcb /outputDir:$(OutDir)/Assets /intermediateDir:$(ProjectDir)/obj/$(ConfigurationName) /clean&#xD;&#xA;mgcb /config:$(ConfigurationName) /outputDir:$(OutDir) /intermediateDir:$(ProjectDir)/obj/$(ConfigurationName) /@:$(ProjectDir)/Assets/Content.mgcb" />
+    <Exec Command="mgcb /outputDir:$(OutDir) /intermediateDir:obj /config:$(Configuration) /profile:Reach /@:$(ProjectDir)\Assets\Content.mgcb" />
   </Target>
 
 </Project>

@@ -65,7 +65,7 @@ namespace GameJam.Utils {
             if (!IsVisible)
                 return;
 
-            DH.RenderScene(Scene, color: COLOR.DarkGray * .25f, logic: ( ) => {
+            DH.RenderScene(Scene, color: COLOR.DarkestGray * .75f, logic: ( ) => {
                 DH.Box(0, (int)Height, (int)Width, 35, COLOR.DarkestGray, AlignType.LB);
                 DH.Line(0, Height - 35, Width, Height - 35, color: COLOR.DarkGray);
 

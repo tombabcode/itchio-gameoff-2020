@@ -16,6 +16,8 @@ namespace GameJam.Services {
         // Helpers
         public int WindowWidth => TryGet("window_width", out int res) ? res : DEF_WindowWidth;
         public int WindowHeight => TryGet("window_height", out int res) ? res : DEF_WindowHeight;
+        public int ViewWidth => WindowWidth;
+        public int ViewHeight => WindowHeight;
         public Keys KEY_Console => TryGet("key_console", out Keys res) ? res : DEF_KEY_Console;
 
         /// <summary>
@@ -26,6 +28,16 @@ namespace GameJam.Services {
             Register("window_width", DEF_WindowWidth);
             Register("window_height", DEF_WindowHeight);
             Register("key_console", DEF_KEY_Console);
+        }
+
+        public override void AssignIngameConfiguration( ) {
+            GraphicsDeviceMNG.PreferredBackBufferWidth = WindowWidth;
+            GraphicsDeviceMNG.PreferredBackBufferHeight = WindowHeight;
+            GraphicsDeviceMNG.ApplyChanges( );
+
+            LogService.Add($"Saving configuration");
+
+            CreateOrSaveConfiguration( );
         }
 
     }
