@@ -3,7 +3,10 @@
 namespace GameJam.Interfaces {
     public interface ICollision {
 
-        public Rectangle CollisionBounds { get; }
+        float CollisionX { get; }
+        float CollisionY { get; }
+
+        Rectangle CollisionBounds { get; }
 
     }
 }

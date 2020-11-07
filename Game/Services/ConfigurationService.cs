@@ -23,9 +23,9 @@ namespace GameJam.Services {
         public const Keys DEF_KEY_MoveLeft = Keys.A;
         public const Keys DEF_KEY_MoveRight = Keys.D;
         public const bool DEF_DebugMode = false;
-        public const int DEF_MasterVolume = 100;
-        public const int DEF_MusicVolume = 50;
-        public const int DEF_SoundVolume = 30;
+        public const float DEF_MasterVolume = 1f;
+        public const float DEF_MusicVolume = .4f;
+        public const float DEF_SoundVolume = .25f;
 
         // Helpers
         public string Language => TryGet("language", out string res) ? res : DEF_Language;
@@ -41,9 +41,9 @@ namespace GameJam.Services {
         public Keys KEY_MoveLeft => TryGet("key_move_left", out Keys res) ? res : DEF_KEY_MoveLeft;
         public Keys KEY_MoveRight => TryGet("key_move_right", out Keys res) ? res : DEF_KEY_MoveRight;
         public bool DebugMode => TryGet("debug_mode", out bool res) ? res : DEF_DebugMode;
-        public int MasterVolume => TryGet("master_volume", out int res) ? res : DEF_MasterVolume;
-        public int MusicVolume => TryGet("music_volume", out int res) ? res : DEF_MusicVolume;
-        public int SoundVolume => TryGet("sound_volume", out int res) ? res : DEF_SoundVolume;
+        public float MasterVolume => TryGet("master_volume", out float res) ? res : DEF_MasterVolume;
+        public float MusicVolume => TryGet("music_volume", out float res) ? res : DEF_MusicVolume;
+        public float SoundVolume => TryGet("sound_volume", out float res) ? res : DEF_SoundVolume;
 
         /// <summary>
         /// Constructor
@@ -77,6 +77,7 @@ namespace GameJam.Services {
             AudioHelper.SoundVolume = SoundVolume;
             AudioHelper.MusicVolume = MusicVolume;
             AudioHelper.MasterVolume = MasterVolume;
+            AudioHelper.Update( );
 
             LogService.Add($"Saving configuration");
 

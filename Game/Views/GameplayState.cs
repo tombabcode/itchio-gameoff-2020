@@ -1,12 +1,19 @@
 ﻿using GameJam.Gameplay;
 using GameJam.Services;
 using GameJam.Types;
+using GameJam.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TBEngine.Components.State;
 using TBEngine.Services;
 using TBEngine.Types;
+using TBEngine.Utils;
 using DH = TBEngine.Utils.DisplayHelper;
+using UH = TBEngine.Utils.UtilsHelper;
 
 namespace GameJam.Views {
     public sealed class GameplayState : State {
@@ -16,6 +23,7 @@ namespace GameJam.Views {
         private ContentService _content;
         private ConfigurationService _config;
         private StateService _state;
+        private GameConsole _console;
 
         private Player _player;
         private CameraService _camera;
@@ -23,11 +31,14 @@ namespace GameJam.Views {
 
         private RenderTarget2D GameplayScene;
 
-        public GameplayState(ContentService content, InputService input, ConfigurationService config, StateService state) {
+        private SpriteFont _debugFont => _content.GetFont(FontType.Tiny);
+
+        public GameplayState(ContentService content, InputService input, ConfigurationService config, StateService state, GameConsole console) {
             _input = input;
             _state = state;
             _config = config;
             _content = content;
+            _console = console;
 
             Initialize(content);
         }
@@ -40,7 +51,12 @@ namespace GameJam.Views {
                 ScaleFactor = 0.05f
             };
             _level = new Level( );
-            _level.GenerateMap(40, 21);
+            _level.GenerateMap(60, 60);
+            List<WorldTile> tiles = _level.Map.Where(tile => !tile.IsWall).ToList( );
+            WorldTile tile = tiles.ElementAt(RandomService.GetRandomInt(tiles.Count));
+            _player.Spawn(tile.X * WorldTile.SIZE, tile.Y * WorldTile.SIZE);
+
+            LogService.Add($"Player spawned at [{tile.X}, {tile.Y}] ({_player.PositionX:0}, {_player.PositionY:0})");
         }
 
         public override void Initialize(ContentServiceBase content) {
@@ -52,30 +68,63 @@ namespace GameJam.Views {
         }
 
         public override void Update(GameTime time) {
-            if (_input.HasScrolledDown( )) _camera.ZoomOut( );
-            if (_input.HasScrolledUp( )) _camera.ZoomIn( );
-            if (_input.IsKeyPressedOnce(_config.KEY_Pause)) {
-                _state.ChangeState(GameStateType.Pause);
-                ((PauseState)_state.GetCurrentState( )).OnResume = ( ) => _state.ChangeState(GameStateType.Gameplay);
+            if (!_console.IsVisible) {
+                if (_input.HasScrolledDown( ))
+                    _camera.ZoomOut( );
+                if (_input.HasScrolledUp( ))
+                    _camera.ZoomIn( );
+                if (_input.IsKeyPressedOnce(_config.KEY_Pause)) {
+                    _state.ChangeState(GameStateType.Pause);
+                    ((PauseState)_state.GetCurrentState( )).OnResume = ( ) => _state.ChangeState(GameStateType.Gameplay);
+                }
+                if (_input.IsKeyPressedOnce(Keys.R))
+                    NewGame( );
+
+                _player.Update(_input, _config, time);
+                _camera.LookAt(-_player.PositionX * _camera.Scale, -_player.PositionY * _camera.Scale);
             }
 
-            _player.Update(_input, _config, time);
             _camera.Update( );
         }
 
         public override void Render(GameTime time) {
             DH.RenderScene(GameplayScene, _camera, ( ) => {
                 foreach (WorldTile tile in _level.Map)
-                    if (tile.ID == 1)
-                        DH.Raw(_content.Pixel, tile.X * 8, tile.Y * 8, Color.Green);
+                    if (!tile.IsWall) {
+                        float distance = (float)Math.Sqrt(Math.Pow(tile.DisplayX - _player.PositionX, 2) + Math.Pow(tile.DisplayY - _player.PositionY, 2));
+                        float percentage = 1 - (distance < 725 ? 0 : (distance - 725) / 1450);
+                        DH.Raw(_content.TEXGround.Texture, tile.DisplayX - 16, tile.DisplayY - 16, color: ColorsManager.Get(percentage));
+                    }
 
-                //DH.Raw(_content.Pixel, _player.CollisionBounds.X + _player.PositionX, _player.CollisionBounds.Y + _player.PositionY, _player.CollisionBounds.Width, _player.CollisionBounds.Height, align: AlignType.CM);
-                //DH.Raw(_content.TEXTest.Texture, _player.GetDisplayData(time, _content), align: AlignType.CB);
+                DH.Raw(_content.Pixel, _player.CollisionX, _player.CollisionY, _player.CollisionBounds.Width, _player.CollisionBounds.Height);
+                DH.Raw(_content.TEXCharacter.Texture, _player.GetDisplayData(time, _content), align: AlignType.CB);
             });
 
             DH.RenderScene(Scene, ( ) => {
                 DH.Scene(GameplayScene);
                 DH.Text(_content.GetFont( ), _player.Name, 15, 15, false);
+
+                // Mini-map
+                UH.Loops(_level.Width, _level.Height, (x, y) => {
+                if (!_level.Map[y * _level.Width + x].IsWall)
+                    DH.Raw(_content.Pixel, 
+                        _config.ViewWidth - 16 - _level.Width * 4 + x * 4, 
+                        _config.ViewHeight - 16 - _level.Height * 4 + y  * 4, 
+                        4, 4, 
+                        (_player.OnMapX == x && _player.OnMapY == y ? Color.Red : Color.Gray) * .5f
+                    );
+                });
+
+                if (_config.DebugMode) {
+                    DH.Text(_debugFont, $"{(int)(1 / time.ElapsedGameTime.TotalSeconds)} FPS", _config.WindowWidth - 10, 10, false, ColorsManager.DarkGray, AlignType.RT);
+                    DH.Text(_debugFont, $"Mouse ({_input.MouseX}, {_input.MouseY})", _config.WindowWidth - 10, 25, false, ColorsManager.DarkGray, AlignType.RT);
+                    DH.Text(_debugFont, $"Player ({_player.PositionX:0.0}, {_player.PositionY:0.0}) ({_player.OnMapX}, {_player.OnMapY})", _config.WindowWidth - 10, 40, false, ColorsManager.DarkGray, AlignType.RT);
+                    DH.Text(_debugFont, $"Camera ({_camera.Target.X:0.0}, {_camera.Target.Y:0.0})", _config.WindowWidth - 10, 55, false, ColorsManager.DarkGray, AlignType.RT);
+                    DH.Text(_debugFont, $"Scale {_camera.Scale:0.00}x", _config.WindowWidth - 10, 70, false, ColorsManager.DarkGray, AlignType.RT);
+
+                    DH.Line(0, _config.WindowHeight / 2, _config.WindowWidth, _config.WindowHeight / 2, 1, ColorsManager.DarkestGray * .5f);
+                    DH.Line(_config.WindowWidth / 2, 0, _config.WindowWidth / 2, _config.WindowHeight, 1, ColorsManager.DarkestGray * .5f);
+                }
             });
         }
 

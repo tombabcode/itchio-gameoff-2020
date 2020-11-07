@@ -5,7 +5,6 @@ using GameJam.Types;
 using GameJam.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,9 +113,9 @@ namespace GameJam.Views {
 
                 DH.Text(_font, "section_audio", 296, 224, align: AlignType.LB);
                 DH.Line(288, 232, 288 + half_size, 232);
-                DisplayOption(0, "master_volume", ( ) => $"{(int)_cfg["master_volume"]}%", 232);
-                DisplayOption(1, "music_volume", ( ) => $"{(int)_cfg["music_volume"]}%", 264);
-                DisplayOption(2, "sound_volume", ( ) => $"{(int)_cfg["sound_volume"]}%", 296);
+                DisplayOption(0, "master_volume", ( ) => $"{((float)_cfg["master_volume"] * 100):0}%", 232);
+                DisplayOption(1, "music_volume", ( ) => $"{((float)_cfg["music_volume"] * 100):0}%", 264);
+                DisplayOption(2, "sound_volume", ( ) => $"{((float)_cfg["sound_volume"] * 100):0}%", 296);
 
                 DH.Text(_font, "section_controls", 296 + half_size, 48, align: AlignType.LB);
                 DH.Line(288 + half_size, 56, _config.WindowWidth, 56);
@@ -167,20 +166,21 @@ namespace GameJam.Views {
         }
 
         private void ChangeVolume(string id, int value) {
-            int current = (int)_cfg[$"{id}_volume"];
+            string key = $"{id}_volume";
+            float current = (float)_cfg[key];
+            float updated = current + (value / 100f);
 
-            if (current + value < 0) _cfg[$"{id}_volume"] = 0;
-            else if (current + value > 100) _cfg[$"{id}_volume"] = 100;
-            else _cfg[$"{id}_volume"] = current + value;
+            if (updated < 0) _cfg[key] = 0f;
+            else if (updated > 1) _cfg[key] = 1f;
+            else _cfg[key] = updated;
 
             switch (id) {
-                case "master": 
-                    AudioHelper.MusicVolume = current * (int)_cfg["music_volume"]; 
-                    AudioHelper.SoundVolume = current * (int)_cfg["sound_volume"]; 
-                    break;
-                case "music": AudioHelper.MusicVolume = current * (int)_cfg["master_volume"]; break;
-                case "sound": AudioHelper.SoundVolume = current * (int)_cfg["master_volume"]; break;
+                case "master": AudioHelper.MasterVolume = updated; break;
+                case "music": AudioHelper.MusicVolume = updated; break;
+                case "sound": AudioHelper.SoundVolume = updated; break;
             }
+
+            AudioHelper.Update( );
         }
 
     }

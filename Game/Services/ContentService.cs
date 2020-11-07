@@ -23,7 +23,8 @@ namespace GameJam.Services {
         private SpriteFont _fontSmall;
         private SpriteFont _fontTiny;
 
-        public TextureStatic TEXTest { get; private set; }
+        public TextureStatic TEXCharacter { get; private set; }
+        public TextureStatic TEXGround { get; private set; }
 
         public SoundEffect AUDIO_ButtonHover { get; private set; }
 
@@ -49,7 +50,8 @@ namespace GameJam.Services {
             _fontStandard = Content.Load<SpriteFont>(Path.Combine("Fonts", "Standard"));
             _fontStandardItalic = Content.Load<SpriteFont>(Path.Combine("Fonts", "StandardItalic"));
 
-            TEXTest = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Characters", "test_texture")));
+            TEXCharacter = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Characters", "test_texture")));
+            TEXGround = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Ground", "tile_0")));
 
             AUDIO_ButtonHover = Content.Load<SoundEffect>(Path.Combine("Audio", "UI", "button_menu"));
 

@@ -23,7 +23,7 @@ namespace GameJam {
     public sealed class Core : Game {
 
         // Const
-        public const string VERSION = "0.1.2";
+        public const string VERSION = "0.1.3";
 
         // Local
         private readonly GraphicsDeviceManager _deviceMNG;
@@ -93,7 +93,7 @@ namespace GameJam {
             LOG.Add("Initializing states...");
             _state = new StateService( );
             _state.Register(GameStateType.MainMenu, new MainMenuState(_content, _input, _config, _state, _console));
-            _state.Register(GameStateType.Gameplay, new GameplayState(_content, _input, _config, _state));
+            _state.Register(GameStateType.Gameplay, new GameplayState(_content, _input, _config, _state, _console));
             _state.Register(GameStateType.Credits, new CreditsState( ));
             _state.Register(GameStateType.Settings, new SettingsState(_content, _input, _config, _state));
             _state.Register(GameStateType.Tutorial, new TutorialState( ));
@@ -107,6 +107,7 @@ namespace GameJam {
 
             // Common
             LOG.Add("Finalizing initialization...");
+            RandomService.Random = new Random( );
             TranslationService.LoadTranslations<LanguageModel>(_config.Language);
 
             LOG.Add($"App ready, version {VERSION}", LogType.Success);
@@ -136,11 +137,6 @@ namespace GameJam {
             // Display
             DH.RenderScene(null, ( ) => {
                 _state.GetCurrentState( ).Display( );
-
-                if (_config.DebugMode) {
-                    DH.Text(Font, $"{(int)(1 / gameTime.ElapsedGameTime.TotalSeconds)} FPS", _config.WindowWidth - 10, 10, false, COLOR.DarkGray, ALIGN.RT);
-                    DH.Text(Font, $"Mouse ({_input.MouseX}, {_input.MouseY})", _config.WindowWidth - 10, 25, false, COLOR.DarkGray, ALIGN.RT);
-                }
                 
                 DH.Text(Font, $"ver. {VERSION}", 10, Height - 10, false, COLOR.DarkGray, ALIGN.LM);
                 DH.Text(Font, $"Copyright (C) Tomasz Babiak, ASwan, Oliver F. for Game Off 2020, itch.io", Width - 10, Height - 10, false, COLOR.DarkGray, ALIGN.RM);

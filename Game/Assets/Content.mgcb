@@ -75,6 +75,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Characters/test_texture.png
 
+#begin Textures/Ground/tile_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Ground/tile_0.png
+
 #begin Textures/UI/menu_box_bg.png
 /importer:TextureImporter
 /processor:TextureProcessor
