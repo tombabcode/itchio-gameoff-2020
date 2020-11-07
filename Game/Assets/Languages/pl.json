@@ -1,0 +1,39 @@
+﻿{
+	"Language": "pl",
+	"LanguageName": "Polski",
+	"Data": {
+		"Buttons": {
+			"continue": "Kontynuuj",
+			"new_game": "Nowa gra",
+			"how_to_play": "Jak grać",
+			"settings": "Ustawienia",
+			"credits": "Autorzy",
+			"exit_app": "Wyjdź",
+			"back": "Cofnij",
+			"save_changes": "Zapisz zmiany"
+		},
+		"Labels": {
+			"resolution": "Rozdzielczość",
+			"window_mode": "Tryb okna",
+			"master_volume": "Główna głośność",
+			"sound_volume": "Głośność efektów",
+			"music_volume": "Głośność muzyki",
+
+			"mode_fullscreen": "Pełen ekran",
+			"mode_window": "Okno",
+			
+			"section_general": "Ogólne",
+			"section_graphics": "Grafika",
+			"section_audio": "Dźwięk",
+			"section_controls": "Sterowanie",
+			
+			"language": "Język",
+			"key_console": "Konsola",
+			"key_pause": "Pauza",
+			"key_move_up": "Idź w górę",
+			"key_move_down": "Idź w dół",
+			"key_move_left": "Idź w lewo",
+			"key_move_right": "Idź w prawo"
+		}
+	}
+}

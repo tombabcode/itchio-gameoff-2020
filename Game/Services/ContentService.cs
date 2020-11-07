@@ -3,9 +3,12 @@ using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using TBEngine.Services;
-using TBEngine.Types;
 using TBEngine.Textures;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
+using System.Collections.Generic;
+using System;
+using GameJam.Types;
 
 namespace GameJam.Services {
     /// <summary>
@@ -14,13 +17,19 @@ namespace GameJam.Services {
     public sealed class ContentService : ContentServiceBase {
 
         // Local
+        private SpriteFont _fontBig;
         private SpriteFont _fontStandard;
         private SpriteFont _fontStandardItalic;
+        private SpriteFont _fontSmall;
         private SpriteFont _fontTiny;
 
         public TextureStatic TEXTest { get; private set; }
 
         public SoundEffect AUDIO_ButtonHover { get; private set; }
+
+        public List<Tuple<GameMoodType, Song>> AUDIO_Songs { get; private set; }
+
+        public Texture2D TEXUI_MenuBG { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -34,6 +43,8 @@ namespace GameJam.Services {
         /// Loads app's content
         /// </summary>
         public override void LoadContent( ) {
+            _fontBig = Content.Load<SpriteFont>(Path.Combine("Fonts", "Big"));
+            _fontSmall = Content.Load<SpriteFont>(Path.Combine("Fonts", "Small"));
             _fontTiny = Content.Load<SpriteFont>(Path.Combine("Fonts", "Tiny"));
             _fontStandard = Content.Load<SpriteFont>(Path.Combine("Fonts", "Standard"));
             _fontStandardItalic = Content.Load<SpriteFont>(Path.Combine("Fonts", "StandardItalic"));
@@ -41,26 +52,32 @@ namespace GameJam.Services {
             TEXTest = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Characters", "test_texture")));
 
             AUDIO_ButtonHover = Content.Load<SoundEffect>(Path.Combine("Audio", "UI", "button_menu"));
+
+            AUDIO_Songs = new List<Tuple<GameMoodType, Song>>( ) {
+                new Tuple<GameMoodType, Song>(GameMoodType.Default, Content.Load<Song>(Path.Combine("Audio", "Music", "song_0")))
+            };
         }
 
-        /// <summary>
-        /// Get correct font based on type and properties
-        /// </summary>
-        /// <param name="type">Type of the font</param>
-        /// <param name="props">Flags (ex. bold, italic, etc)</param>
-        /// <returns><see cref="SpriteFont"/></returns>
-        public override SpriteFont GetFont(FontType type = FontType.Standard, FontPropertyType[] props = null) {
-            bool isItalic = props != null && props.Contains(FontPropertyType.Italic);
+        public void UpdateDynamicContent(ConfigurationService config) {
+            TEXUI_MenuBG = FillTexture(Content.Load<Texture2D>(Path.Combine("Textures", "UI", "menu_box_bg")), 256, config.ViewHeight);
+        }
 
-            if (type == FontType.Standard) {
-                if (isItalic) return _fontStandardItalic;
-                return _fontStandard;
-            }
+        public SpriteFont GetFont(FontType fontType = FontType.Standard) {
+            return fontType switch {
+                FontType.Tiny => _fontTiny,
+                FontType.Big => _fontBig,
+                FontType.Standard => _fontStandard,
+                FontType.Small => _fontSmall,
+                _ => _fontStandard,
+            };
+        }
 
-            if (type == FontType.Tiny)
-                return _fontTiny;
+        public Song GetRandomSong(GameMoodType mood = GameMoodType.Default) {
+            Tuple<GameMoodType, Song> data = AUDIO_Songs.Find(song => song.Item1 == mood);
+            if (data != null)
+                return data.Item2;
 
-            return _fontStandard;
+            return null;
         }
 
     }

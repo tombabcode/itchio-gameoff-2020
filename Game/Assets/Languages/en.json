@@ -3,8 +3,37 @@
 	"LanguageName": "English",
 	"Data": {
 		"Buttons": {
+			"continue": "Continue",
 			"new_game": "New game",
-			"exit_app": "Leave"
+			"how_to_play": "How to play",
+			"settings": "Settings",
+			"credits": "Credits",
+			"exit_app": "Leave",
+			"back": "Back",
+			"save_changes": "Save changes"
+		},
+		"Labels": {
+			"resolution": "Resolution",
+			"window_mode": "Window mode",
+			"master_volume": "Master volume",
+			"sound_volume": "Sound volume",
+			"music_volume": "Music volume",
+
+			"mode_fullscreen": "Fullscreen",
+			"mode_window": "Window",
+
+			"section_general": "General",
+			"section_graphics": "Graphics",
+			"section_audio": "Audio",
+			"section_controls": "Controls",
+
+			"language": "Language",
+			"key_console": "Console",
+			"key_pause": "Pause",
+			"key_move_up": "Move up",
+			"key_move_down": "Move down",
+			"key_move_left": "Move left",
+			"key_move_right": "Move right"
 		}
 	}
 }

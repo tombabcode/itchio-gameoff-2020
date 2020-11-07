@@ -29,7 +29,7 @@
   </ItemGroup>
   
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="mgcb /outputDir:$(OutDir) /intermediateDir:obj /config:$(Configuration) /profile:Reach /@:$(ProjectDir)/Assets/Content.mgcb" />
+    <Exec Command="mgcb /outputDir:$(OutDir) /intermediateDir:obj /config:$(Configuration) /profile:Reach /platform:DesktopGL /@:$(ProjectDir)/Assets/Content.mgcb" />
   </Target>
 
 </Project>

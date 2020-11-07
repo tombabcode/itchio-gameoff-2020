@@ -8,10 +8,13 @@ using TBEngine.Types;
 using ALIGN = TBEngine.Types.AlignType;
 using COLOR = GameJam.Utils.ColorsManager;
 using DH = TBEngine.Utils.DisplayHelper;
+using LOG = TBEngine.Services.LogService;
 using GameJam.Types;
 using GameJam.Views;
 using TBEngine.Utils;
 using GameJam.Models;
+using Microsoft.Xna.Framework.Media;
+using System;
 
 namespace GameJam {
     /// <summary>
@@ -20,7 +23,7 @@ namespace GameJam {
     public sealed class Core : Game {
 
         // Const
-        public const string VERSION = "0.1";
+        public const string VERSION = "0.1.2";
 
         // Local
         private readonly GraphicsDeviceManager _deviceMNG;
@@ -59,37 +62,54 @@ namespace GameJam {
 
             _config = new ConfigurationService(_deviceMNG);
             _config.LoadConfiguration( );
-
-            _deviceMNG.PreferredBackBufferWidth = _config.WindowWidth;
-            _deviceMNG.PreferredBackBufferHeight = _config.WindowHeight;
-            _deviceMNG.ApplyChanges( );
+            _config.AssignIngameConfiguration( );
 
             _canvas = new SpriteBatch(GraphicsDevice);
 
             _input = new InputService( );
             _content = new ContentService(Content, GraphicsDevice, _canvas);
-            _console = new GameConsole(_input, _content, _config, _config.WindowWidth, Height);
+
+            // Console
+            LOG.Add("Initializing console commands...");
+            _console = new GameConsole(_input, _content, _config);
+            _console.Initialize(_content);
             _console.SetAction("hide", 0, (args) => _console.IsVisible = false);
             _console.SetAction("exit", 0, (args) => Exit( ));
-            _console.SetAction("translate", 1, (args) => LogService.Add(TranslationService.Get(args[0]), LogType.Success));
+            _console.SetAction("debug", 0, (args) => _config.Change("debug_mode", !_config.DebugMode));
+            _console.SetAction("translate", 1, (args) => LOG.Add(TranslationService.Get(args[0]), LogType.Success));
             _console.SetAction("new_game", 0, (args) => {
                 _state.ChangeState(GameStateType.Gameplay);
                 ((GameplayState)_state.GetCurrentState( )).NewGame(args.Length >= 1 ? args[0] : null);
+                MediaPlayer.Stop( );
             });
 
+            // Content
+            LOG.Add("Loading application's content");
             DH.Content = _content;
-
             _content.LoadContent( );
+            _content.UpdateDynamicContent(_config);
 
+            // States
+            LOG.Add("Initializing states...");
             _state = new StateService( );
-            _state.Register(GameStateType.MainMenu, new MainMenuState(_content, _input, _config, _console));
-            _state.Register(GameStateType.Gameplay, new GameplayState(_content, _input, _config));
+            _state.Register(GameStateType.MainMenu, new MainMenuState(_content, _input, _config, _state, _console));
+            _state.Register(GameStateType.Gameplay, new GameplayState(_content, _input, _config, _state));
+            _state.Register(GameStateType.Credits, new CreditsState( ));
+            _state.Register(GameStateType.Settings, new SettingsState(_content, _input, _config, _state));
+            _state.Register(GameStateType.Tutorial, new TutorialState( ));
+            _state.Register(GameStateType.Pause, new PauseState(_content, _input, _config));
             _state.ChangeState(GameStateType.MainMenu);
 
-            TranslationService.LoadTranslations<LanguageModel>("en");
-            AudioHelper.SoundVolume = .25f;
+            // Audio
+            LOG.Add("Initializing audio...");
+            MediaPlayer.IsRepeating = true; // Temporary
+            AudioHelper.Music(_content.GetRandomSong( ));
 
-            LogService.Add($"App ready, version {VERSION}", LogType.Info);
+            // Common
+            LOG.Add("Finalizing initialization...");
+            TranslationService.LoadTranslations<LanguageModel>(_config.Language);
+
+            LOG.Add($"App ready, version {VERSION}", LogType.Success);
         }
 
         /// <summary>
@@ -116,8 +136,12 @@ namespace GameJam {
             // Display
             DH.RenderScene(null, ( ) => {
                 _state.GetCurrentState( ).Display( );
+
+                if (_config.DebugMode) {
+                    DH.Text(Font, $"{(int)(1 / gameTime.ElapsedGameTime.TotalSeconds)} FPS", _config.WindowWidth - 10, 10, false, COLOR.DarkGray, ALIGN.RT);
+                    DH.Text(Font, $"Mouse ({_input.MouseX}, {_input.MouseY})", _config.WindowWidth - 10, 25, false, COLOR.DarkGray, ALIGN.RT);
+                }
                 
-                DH.Text(Font, $"FPS {(int)(1 / gameTime.ElapsedGameTime.TotalSeconds)}", 10, 10, false, COLOR.DarkGray);
                 DH.Text(Font, $"ver. {VERSION}", 10, Height - 10, false, COLOR.DarkGray, ALIGN.LM);
                 DH.Text(Font, $"Copyright (C) Tomasz Babiak, ASwan, Oliver F. for Game Off 2020, itch.io", Width - 10, Height - 10, false, COLOR.DarkGray, ALIGN.RM);
 

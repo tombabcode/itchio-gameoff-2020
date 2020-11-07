@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using GameJam.Services;
+using GameJam.Types;
 using TBEngine.Utils.Elements;
 using TBEngine.Types;
 
@@ -16,14 +17,16 @@ namespace GameJam.Utils {
     /// </summary>
     public sealed class GameConsole : GameConsoleBase {
 
-        // Services
-        private ConfigurationService _config;
+        // References
+        private readonly ConfigurationService _config;
+        private readonly ContentService _content;
+        private readonly InputService _input;
 
         // Should display "|" sign that occures while typing
         private bool _typeWall;
 
         // Helpers
-        private SpriteFont Font => Content.GetFont(FontType.Tiny);
+        private SpriteFont Font => _content.GetFont(FontType.Tiny);
         private Keys KEY_Console => _config.TryGet("key_console", out Keys key) ? key : Keys.OemTilde;
         private int LineHeight => 17;
 
@@ -34,8 +37,19 @@ namespace GameJam.Utils {
         /// <param name="content"><see cref="ContentService"/></param>
         /// <param name="width">Width of the console</param>
         /// <param name="height">Height of the console</param>
-        public GameConsole(InputService input, ContentService content, ConfigurationService config, int width, int height) : base(input, content, width, height) {
+        public GameConsole(InputService input, ContentService content, ConfigurationService config) {
             _config = config;
+            _input = input;
+            _content = content;
+
+            Initialize(content);
+        }
+
+        public override void Initialize(TBEngine.Services.ContentServiceBase content) {
+            Width = _config.ViewWidth;
+            Height = _config.ViewHeight;
+
+            base.Initialize(content);
         }
 
         /// <summary>
@@ -44,20 +58,20 @@ namespace GameJam.Utils {
         /// <param name="time"><see cref="GameTime"/></param>
         public override void Update(GameTime time) {
             if (IsVisible) {
-                if (Input.IsKeyPressedOnce(Keys.Back) || Input.GetPressedKey(500) == Keys.Back)
+                if (_input.IsKeyPressedOnce(Keys.Back) || _input.GetPressedKey(500) == Keys.Back)
                     Command = Command.Length > 0 ? Command.Remove(Command.Length - 1) : "";
-                else if (Input.IsKeyPressedOnce(Keys.Enter) && Command.Length > 0) {
+                else if (_input.IsKeyPressedOnce(Keys.Enter) && Command.Length > 0) {
                     ExecuteCommand(Command);
                     Command = "";
                 } else {
-                    char? consoleKey = TEXT.GetCharacterFromKey(KEY_Console, Input);
-                    Command += TEXT.GetTextFromKeys(Input, consoleKey.HasValue ? new[] { consoleKey.Value } : null);
+                    char? consoleKey = TEXT.GetCharacterFromKey(KEY_Console, _input);
+                    Command += TEXT.GetTextFromKeys(_input, consoleKey.HasValue ? new[] { consoleKey.Value } : null);
                 }
 
                 _typeWall = time.TotalGameTime.Milliseconds % 1000 >= 500;
             }
 
-            if (Input.IsKeyPressedOnce(KEY_Console))
+            if (_input.IsKeyPressedOnce(KEY_Console))
                 IsVisible = !IsVisible;
         }
 

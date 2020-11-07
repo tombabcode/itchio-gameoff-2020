@@ -11,13 +11,13 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>Go-Regular</FontName>
+    <FontName>Go-Bold</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
     the size of the font.
     -->
-    <Size>12</Size>
+    <Size>10.5</Size>
 
     <!--
     Spacing is a float value, measured in pixels. Modify this value to change
@@ -26,7 +26,7 @@ with.
     <Spacing>0</Spacing>
 
     <!--
-    UseKerning controls the layout of the font. If this value is true, kerning information
+    UseKerning controls the layout of the font. If this value is true, kerning informsation
     will be used when placing characters.
     -->
     <UseKerning>true</UseKerning>
@@ -54,6 +54,42 @@ with.
       <CharacterRegion>
         <Start>&#32;</Start>
         <End>&#126;</End>
+      </CharacterRegion>
+      <!-- Polish letters -->
+      <CharacterRegion>
+        <!-- Ó -->
+        <Start>&#211;</Start>
+        <End>&#211;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <!-- ó -->
+        <Start>&#243;</Start>
+        <End>&#243;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <!-- Ą Ć-->
+        <Start>&#260;</Start>
+        <End>&#263;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <!-- Ę -->
+        <Start>&#280;</Start>
+        <End>&#281;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <!-- Ń Ł -->
+        <Start>&#321;</Start>
+        <End>&#324;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <!-- Ś -->
+        <Start>&#346;</Start>
+        <End>&#347;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <!-- Ż Ź-->
+        <Start>&#377;</Start>
+        <End>&#380;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>
