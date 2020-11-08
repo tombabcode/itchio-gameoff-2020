@@ -1,12 +1,22 @@
-﻿using GameJam.Services;
+﻿using System;
 using Microsoft.Xna.Framework;
-using System;
+using GameJam.Services;
 using TBEngine.Models.Gameplay;
 using TBEngine.Types;
 using TBEngine.Utils;
 
+using DH = TBEngine.Utils.DisplayHelper;
+using TBEngine.Textures;
+
 namespace GameJam.Gameplay {
+    /// <summary>
+    /// Player
+    /// </summary>
     public sealed class Player : CharacterBase {
+
+        // References
+        private readonly ConfigurationService _config;
+        private readonly TextureStatic _texture;
 
         // Texture display coords
         public float DisplayX => X + 8;
@@ -20,13 +30,29 @@ namespace GameJam.Gameplay {
         public string Name { get; private set; }
         public float Speed { get; private set; } = 512;
 
-        public Player(string name, float x, float y) {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="name">Player's name</param>
+        /// <param name="x">Spawn point X</param>
+        /// <param name="y">Spawn point Y</param>
+        public Player(ContentService content, ConfigurationService config, string name, float x, float y) {
+            _config = config;
+            _texture = content.TEXCharacter;
+
             Name = name;
             X = x;
             Y = y;
             CollisionBounds = new Rectangle(-75, -23, 134, 42);
         }
 
+        /// <summary>
+        /// Player's update movement
+        /// </summary>
+        /// <param name="input"><see cref="InputService"/></param>
+        /// <param name="config"><see cref="ConfigurationService"/></param>
+        /// <param name="time"><see cref="GameTime"/></param>
+        /// <param name="level"><see cref="Level"/></param>
         public void Update(InputService input, ConfigurationService config, GameTime time, Level level) {
             OldX = X;
             OldY = Y;
@@ -66,14 +92,18 @@ namespace GameJam.Gameplay {
             });
         }
 
-        public Rectangle GetDisplayData(GameTime time, ContentService content) {
+        /// <summary>
+        /// Get 
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public void Display(GameTime time) {
+            if (_config.DebugMode)
+                DH.Border(CollisionPosition, thickness: 4);
+
             float value = (float)Math.Cos(MathHelper.ToRadians(360 * ((float)(time.TotalGameTime.TotalMilliseconds % 1000) / 1000)));
-            return new Rectangle(
-                (int)DisplayX,
-                (int)DisplayY,
-                (int)(content.TEXCharacter.Width),
-                (int)(content.TEXCharacter.Height + value * 20) 
-            );;
+            DH.Raw(_texture.Texture, DisplayX, DisplayY, _texture.Width, _texture.Height + (value * 20), align: AlignType.CB);
         }
 
     }

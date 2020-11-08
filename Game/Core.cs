@@ -1,20 +1,27 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using GameJam.Services;
-using GameJam.Utils;
-using TBEngine.Services;
-using TBEngine.Types;
+﻿// System
+using System;
 
-using ALIGN = TBEngine.Types.AlignType;
-using COLOR = GameJam.Utils.ColorsManager;
-using DH = TBEngine.Utils.DisplayHelper;
-using LOG = TBEngine.Services.LogService;
+// Monogame
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Media;
+
+// Project
+using GameJam.Services;
+using GameJam.Models;
+using GameJam.Utils;
 using GameJam.Types;
 using GameJam.Views;
+
+// Engine
+using TBEngine.Types;
 using TBEngine.Utils;
-using GameJam.Models;
-using Microsoft.Xna.Framework.Media;
-using System;
+
+// Static using
+using ALIGN = TBEngine.Types.AlignType;
+using COLOR = GameJam.Utils.ColorsManager;
+using LOG = TBEngine.Services.LogService;
+using DH = TBEngine.Utils.DisplayHelper;
 
 namespace GameJam {
     /// <summary>
@@ -23,13 +30,14 @@ namespace GameJam {
     public sealed class Core : Game {
 
         // Const
-        public const string VERSION = "0.1.4";
+        public const string VERSION = "0.1.4.2";
+        public const string APPNAME = "Moon Crawler";
 
         // Local
         private readonly GraphicsDeviceManager _deviceMNG;
         private SpriteBatch _canvas;
 
-        // Services
+        // References
         private StateService _state;
         private InputService _input;
         private ContentService _content;

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using GameJam.Services;
 using GameJam.Types;
 using TBEngine.Utils.Elements;
+using TBEngine.Services;
 using TBEngine.Types;
 
 using DH = TBEngine.Utils.DisplayHelper;
@@ -45,7 +46,11 @@ namespace GameJam.Utils {
             Initialize(content);
         }
 
-        public override void Initialize(TBEngine.Services.ContentServiceBase content) {
+        /// <summary>
+        /// Initialization
+        /// </summary>
+        /// <param name="content"><see cref="ContentServiceBase"/></param>
+        public override void Initialize(ContentServiceBase content) {
             Width = _config.ViewWidth;
             Height = _config.ViewHeight;
 
@@ -58,9 +63,9 @@ namespace GameJam.Utils {
         /// <param name="time"><see cref="GameTime"/></param>
         public override void Update(GameTime time) {
             if (IsVisible) {
-                if (_input.IsKeyPressedOnce(Keys.Back) || _input.GetPressedKey(500) == Keys.Back)
+                if (_input.IsKeyPressedOnce(Keys.Back) || _input.GetPressedKey(500) == Keys.Back) {
                     Command = Command.Length > 0 ? Command.Remove(Command.Length - 1) : "";
-                else if (_input.IsKeyPressedOnce(Keys.Enter) && Command.Length > 0) {
+                } else if (_input.IsKeyPressedOnce(Keys.Enter) && Command.Length > 0) {
                     ExecuteCommand(Command);
                     Command = "";
                 } else {
@@ -75,6 +80,10 @@ namespace GameJam.Utils {
                 IsVisible = !IsVisible;
         }
 
+        /// <summary>
+        /// Render console
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Render(GameTime time) {
             if (!IsVisible)
                 return;
@@ -86,7 +95,6 @@ namespace GameJam.Utils {
                 // Command input
                 DH.Text(Font, $"Command: {Command}" + (_typeWall ? "|" : ""), new Vector2(10, Height - 10), false, COLOR.DarkGray, AlignType.LB);
 
-                // Displaying logs
                 if (LOG.Logs.Count == 0)
                     return;
 

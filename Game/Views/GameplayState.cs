@@ -1,48 +1,78 @@
-﻿using GameJam.Gameplay;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
+using GameJam.Gameplay;
 using GameJam.Services;
 using GameJam.Types;
 using GameJam.Utils;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TBEngine.Components.State;
 using TBEngine.Services;
 using TBEngine.Types;
 using TBEngine.Utils;
+
 using DH = TBEngine.Utils.DisplayHelper;
 using UH = TBEngine.Utils.UtilsHelper;
 
 namespace GameJam.Views {
+    /// <summary>
+    /// Gameplay state
+    /// </summary>
     public sealed class GameplayState : State {
 
         // References
-        private InputService _input;
-        private ContentService _content;
-        private ConfigurationService _config;
-        private StateService _state;
-        private GameConsole _console;
+        private readonly InputService _input;
+        private readonly ContentService _content;
+        private readonly ConfigurationService _config;
+        private readonly StateService _state;
+        private readonly GameConsole _console;
+        private readonly SpriteFont _debugFont;
 
+        // Gameplay's data
         private Player _player;
         private CameraService _camera;
         private Level _level;
 
-        private RenderTarget2D GameplayScene;
+        // Scenes
+        private RenderTarget2D _gameplayScene;
 
-        private SpriteFont _debugFont => _content.GetFont(FontType.Tiny);
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="content"><see cref="ContentService"/></param>
+        /// <param name="input"><see cref="InputService"/></param>
+        /// <param name="config"><see cref="ConfigurationService"/></param>
+        /// <param name="state"><see cref="StateService"/></param>
+        /// <param name="console"><see cref="GameConsole"/></param>
         public GameplayState(ContentService content, InputService input, ConfigurationService config, StateService state, GameConsole console) {
             _input = input;
             _state = state;
             _config = config;
             _content = content;
             _console = console;
+            _debugFont = _content.GetFont(FontType.Tiny);
 
             Initialize(content);
         }
 
+        /// <summary>
+        /// State's initialize
+        /// </summary>
+        /// <param name="content"><see cref="ContentServiceBase"/></param>
+        public override void Initialize(ContentServiceBase content) {
+            Width = _config.ViewWidth;
+            Height = _config.ViewHeight;
+            _gameplayScene = new RenderTarget2D(content.Device, (int)Width, (int)Height);
+
+            base.Initialize(content);
+        }
+
+        /// <summary>
+        /// Creates a new game
+        /// </summary>
+        /// <param name="playerName">Player's name</param>
         public void NewGame(string playerName = null) {
             _camera = new CameraService(0.25f, new Vector2(_config.WindowWidth / 2, _config.WindowHeight / 2)) {
                 MinScale = 0.20f,
@@ -53,19 +83,15 @@ namespace GameJam.Views {
             _level.GenerateMap(20, 20);
             List<WorldTile> tiles = _level.Map.Where(tile => !tile.IsWall).ToList( );
             WorldTile tile = tiles.ElementAt(RandomService.GetRandomInt(tiles.Count));
-            _player = new Player(playerName ?? "Unknown", tile.DisplayX, tile.DisplayY);
+            _player = new Player(_content, _config, playerName ?? "Unknown", tile.DisplayX, tile.DisplayY);
 
             LogService.Add($"Player spawned at [{tile.X}, {tile.Y}] ({_player.X:0}, {_player.Y:0})");
         }
 
-        public override void Initialize(ContentServiceBase content) {
-            Width = _config.ViewWidth;
-            Height = _config.ViewHeight;
-            GameplayScene = new RenderTarget2D(content.Device, (int)Width, (int)Height);
-            
-            base.Initialize(content);
-        }
-
+        /// <summary>
+        /// State's update
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Update(GameTime time) {
             if (!_console.IsVisible) {
                 if (_input.HasScrolledDown( )) _camera.ZoomOut( );
@@ -85,8 +111,12 @@ namespace GameJam.Views {
             _camera.Update( );
         }
 
+        /// <summary>
+        /// Render state
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Render(GameTime time) {
-            DH.RenderScene(GameplayScene, _camera, ( ) => {
+            DH.RenderScene(_gameplayScene, _camera, ( ) => {
                 foreach (WorldTile tile in _level.Map)
                     if (!tile.IsWall) {
                         float distance = (float)Math.Sqrt(Math.Pow(tile.DisplayX - _player.X, 2) + Math.Pow(tile.DisplayY - _player.Y, 2));
@@ -106,13 +136,11 @@ namespace GameJam.Views {
                             DH.Line(tile.DisplayX, tile.DisplayY + tile.Size, tile.DisplayX + tile.Size, tile.DisplayY + tile.Size, 8, Color.Red);
                     }
 
-                if (_config.DebugMode)
-                    DH.Raw(_content.Pixel, _player.CollisionPosition);
-                DH.Raw(_content.TEXCharacter.Texture, _player.GetDisplayData(time, _content), align: AlignType.CB);
+                _player.Display(time);
             });
 
             DH.RenderScene(Scene, ( ) => {
-                DH.Scene(GameplayScene);
+                DH.Scene(_gameplayScene);
                 DH.Text(_content.GetFont( ), _player.Name, 15, 15, false);
 
                 // Mini-map

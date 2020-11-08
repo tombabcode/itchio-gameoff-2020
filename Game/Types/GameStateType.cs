@@ -1,4 +1,7 @@
 ﻿namespace GameJam.Types {
+    /// <summary>
+    /// Game states
+    /// </summary>
     public enum GameStateType {
 
         MainMenu,

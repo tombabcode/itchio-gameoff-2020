@@ -1,8 +1,7 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using TBEngine.Services;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Media;
 using TBEngine.Utils;
 
 namespace GameJam.Services {
@@ -11,7 +10,7 @@ namespace GameJam.Services {
     /// </summary>
     public sealed class ConfigurationService : ConfigurationServiceBase {
 
-        // Const
+        // Defaults
         public const string DEF_Language = "en";
         public const bool DEF_WindowFullscreen = false;
         public const int DEF_WindowWidth = 1280;
@@ -28,6 +27,7 @@ namespace GameJam.Services {
         public const float DEF_SoundVolume = .25f;
 
         // Helpers
+#pragma warning disable IDE0075 // Uprość wyrażenie warunkowe
         public string Language => TryGet("language", out string res) ? res : DEF_Language;
         public bool WindowFullscreen => TryGet("window_fullscreen", out bool res) ? res : DEF_WindowFullscreen;
         public int WindowWidth => TryGet("window_width", out int res) ? res : DEF_WindowWidth;
@@ -44,6 +44,7 @@ namespace GameJam.Services {
         public float MasterVolume => TryGet("master_volume", out float res) ? res : DEF_MasterVolume;
         public float MusicVolume => TryGet("music_volume", out float res) ? res : DEF_MusicVolume;
         public float SoundVolume => TryGet("sound_volume", out float res) ? res : DEF_SoundVolume;
+#pragma warning restore IDE0075 // Uprość wyrażenie warunkowe
 
         /// <summary>
         /// Constructor
@@ -68,6 +69,9 @@ namespace GameJam.Services {
             });
         }
 
+        /// <summary>
+        /// Update and apply app's configuration
+        /// </summary>
         public override void AssignIngameConfiguration( ) {
             GraphicsDeviceMNG.IsFullScreen = WindowFullscreen;
             GraphicsDeviceMNG.PreferredBackBufferWidth = WindowWidth;
@@ -84,6 +88,12 @@ namespace GameJam.Services {
             CreateOrSaveConfiguration( );
         }
 
+        /// <summary>
+        /// Change value for given key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="saveConfig"></param>
         public void Change(string key, object value, bool saveConfig = false) {
             if (Configuration.ContainsKey(key)) {
                 Configuration[key] = value;

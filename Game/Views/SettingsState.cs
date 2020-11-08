@@ -1,41 +1,53 @@
-﻿using GameJam.Components;
-using GameJam.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using GameJam.Components;
 using GameJam.Services;
+using GameJam.Models;
 using GameJam.Types;
 using GameJam.Utils;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TBEngine.Components.State;
 using TBEngine.Services;
 using TBEngine.Types;
 using TBEngine.Utils;
-using DH = TBEngine.Utils.DisplayHelper;
+
 using LANG = TBEngine.Utils.TranslationService;
+using DH = TBEngine.Utils.DisplayHelper;
 
 namespace GameJam.Views {
+    /// <summary>
+    /// Game's settings menu
+    /// </summary>
     public sealed class SettingsState : State {
 
         // References
-        private ConfigurationService _config;
-        private ContentService _content;
-        private InputService _input;
-        private StateService _state;
+        private readonly ConfigurationService _config;
+        private readonly ContentService _content;
+        private readonly InputService _input;
+        private readonly StateService _state;
+        private readonly SpriteFont _font;
 
+        // Actions
         public Action OnResume { get; set; }
 
+        // Components
         private MenuButton _backButton;
         private MenuButton _saveButton;
-
-        private SpriteFont _font;
 
         private Dictionary<string, object> _cfg;
         private List<string> _changedConfig;
         private Dictionary<string, string> _translations;
         private List<DisplayMode> _supportedResolutions;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="content"><see cref="ContentService"/></param>
+        /// <param name="input"><see cref="InputService"/></param>
+        /// <param name="config"><see cref="ConfigurationService"/></param>
+        /// <param name="state"><see cref="StateService"/></param>
         public SettingsState(ContentService content, InputService input, ConfigurationService config, StateService state) {
             _input = input;
             _config = config;
@@ -56,6 +68,10 @@ namespace GameJam.Views {
             Initialize(content);
         }
 
+        /// <summary>
+        /// State's initialization
+        /// </summary>
+        /// <param name="content"><see cref="ContentServiceBase"/></param>
         public override void Initialize(ContentServiceBase content) {
             Width = _config.ViewWidth;
             Height = _config.ViewHeight;
@@ -70,6 +86,10 @@ namespace GameJam.Views {
             }};
         }
 
+        /// <summary>
+        /// State's update
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Update(GameTime time) {
             _changedConfig = _cfg.Where(entry => _config.Configuration[entry.Key] != entry.Value).Select(entry => entry.Key).ToList( );
 
@@ -92,6 +112,10 @@ namespace GameJam.Views {
             _backButton.Update(time);
         }
 
+        /// <summary>
+        /// State's render
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Render(GameTime time) {
             DH.RenderScene(Scene, ( ) => {
                 DH.Raw(_content.TEXUI_MenuBG, 32, 0);
@@ -130,9 +154,17 @@ namespace GameJam.Views {
             });
         }
 
-        private void DisplayOption(int ID, string optionID, Func<string> value, int y, bool second = false) {
+        /// <summary>
+        /// Display single option (value, buttons and description)
+        /// </summary>
+        /// <param name="ID">Index of option in current category. Used for coloring odd/even options</param>
+        /// <param name="optionID">Name of an option</param>
+        /// <param name="value">Value to display</param>
+        /// <param name="y">Position Y</param>
+        /// <param name="second">Display in second column</param>
+        private void DisplayOption(int ID, string optionID, Func<string> value, int y, bool secondColumn = false) {
             int half_size = (_config.WindowWidth - 288) / 2;
-            int x = 288 + (second ? half_size : 0);
+            int x = 288 + (secondColumn ? half_size : 0);
 
             if (ID % 2 == 0)
                 DH.Box(x, y, half_size, 32, ColorsManager.DarkGray * .25f);
@@ -140,6 +172,10 @@ namespace GameJam.Views {
             DH.Text(_font, LANG.Get(optionID).ToUpper( ), x + 160, y + 18, false, align: AlignType.LM);
         }
 
+        /// <summary>
+        /// Change language to previous or next from <see cref="_translations"/>
+        /// </summary>
+        /// <param name="toLeft">Is previous value from <see cref="_translations"/></param>
         private void ChangeLanguage(bool toLeft) {
             List<string> data = _translations.Keys.ToList( );
             int currentID = data.IndexOf(_cfg["language"].ToString( ));
@@ -152,6 +188,10 @@ namespace GameJam.Views {
             LANG.LoadTranslations<LanguageModel>(_cfg["language"].ToString( ));
         }
 
+        /// <summary>
+        /// Change resolution to previous or next from <see cref="_supportedResolutions"/>
+        /// </summary>
+        /// <param name="toLeft">Is previous value from <see cref="_supportedResolutions"/></param>
         private void ChangeResolution(bool toLeft) {
             DisplayMode mode = _supportedResolutions.Find(res => res.Width == (int)_cfg["window_width"] && res.Height == (int)_cfg["window_height"]);
             int currentID = mode == null ? -1 : _supportedResolutions.IndexOf(mode);
@@ -165,6 +205,11 @@ namespace GameJam.Views {
             _cfg["window_height"] = _supportedResolutions[currentID].Height;
         }
 
+        /// <summary>
+        /// Change master, sound or music volume
+        /// </summary>
+        /// <param name="id">"master", "sound" or "music" ID</param>
+        /// <param name="value">Change value, in percentage (e.g. 5 means 5% (so 0.05 will be added)</param>
         private void ChangeVolume(string id, int value) {
             string key = $"{id}_volume";
             float current = (float)_cfg[key];

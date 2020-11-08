@@ -1,14 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.IO;
+using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using TBEngine.Services;
-using TBEngine.Textures;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
-using System.Collections.Generic;
-using System;
 using GameJam.Types;
+using TBEngine.Services;
+using TBEngine.Textures;
 
 namespace GameJam.Services {
     /// <summary>
@@ -16,20 +15,23 @@ namespace GameJam.Services {
     /// </summary>
     public sealed class ContentService : ContentServiceBase {
 
-        // Local
+        // Font data
         private SpriteFont _fontBig;
         private SpriteFont _fontStandard;
-        private SpriteFont _fontStandardItalic;
         private SpriteFont _fontSmall;
         private SpriteFont _fontTiny;
 
+        // Textures
         public TextureStatic TEXCharacter { get; private set; }
         public TextureStatic TEXGround { get; private set; }
 
+        // Sound effects
         public SoundEffect AUDIO_ButtonHover { get; private set; }
 
+        // Music
         public List<Tuple<GameMoodType, Song>> AUDIO_Songs { get; private set; }
 
+        // GUI
         public Texture2D TEXUI_MenuBG { get; private set; }
 
         /// <summary>
@@ -48,7 +50,6 @@ namespace GameJam.Services {
             _fontSmall = Content.Load<SpriteFont>(Path.Combine("Fonts", "Small"));
             _fontTiny = Content.Load<SpriteFont>(Path.Combine("Fonts", "Tiny"));
             _fontStandard = Content.Load<SpriteFont>(Path.Combine("Fonts", "Standard"));
-            _fontStandardItalic = Content.Load<SpriteFont>(Path.Combine("Fonts", "StandardItalic"));
 
             TEXCharacter = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Characters", "test_texture")));
             TEXGround = new TextureStatic(Content.Load<Texture2D>(Path.Combine("Textures", "Ground", "tile_0")));
@@ -60,10 +61,23 @@ namespace GameJam.Services {
             };
         }
 
+        /// <summary>
+        /// Loads dynamic content that can change during app's lifetime
+        /// </summary>
+        /// <param name="config"><see cref="ConfigurationService"/></param>
         public void UpdateDynamicContent(ConfigurationService config) {
+            // Cleanup
+            if (TEXUI_MenuBG != null) TEXUI_MenuBG.Dispose( );
+            
+            // Loading
             TEXUI_MenuBG = FillTexture(Content.Load<Texture2D>(Path.Combine("Textures", "UI", "menu_box_bg")), 256, config.ViewHeight);
         }
 
+        /// <summary>
+        /// Get font based on given properties
+        /// </summary>
+        /// <param name="fontType">Font size</param>
+        /// <returns><see cref="SpriteFont"/></returns>
         public SpriteFont GetFont(FontType fontType = FontType.Standard) {
             return fontType switch {
                 FontType.Tiny => _fontTiny,
@@ -74,6 +88,11 @@ namespace GameJam.Services {
             };
         }
 
+        /// <summary>
+        /// Get random song based on game's mood
+        /// </summary>
+        /// <param name="mood"><see cref="GameMoodType"/></param>
+        /// <returns><see cref="Song"/></returns>
         public Song GetRandomSong(GameMoodType mood = GameMoodType.Default) {
             Tuple<GameMoodType, Song> data = AUDIO_Songs.Find(song => song.Item1 == mood);
             if (data != null)

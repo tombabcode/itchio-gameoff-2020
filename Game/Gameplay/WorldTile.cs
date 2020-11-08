@@ -2,6 +2,9 @@
 using TBEngine.Types;
 
 namespace GameJam.Gameplay {
+    /// <summary>
+    /// In-game map's tile
+    /// </summary>
     public sealed class WorldTile : SquareWallBase {
 
         public const int SIZE = 224;

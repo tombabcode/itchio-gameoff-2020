@@ -1,10 +1,9 @@
-﻿using GameJam.Components;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using GameJam.Components;
 using GameJam.Services;
 using GameJam.Types;
 using GameJam.Utils;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using TBEngine.Components.Elements;
 using TBEngine.Components.State;
 using TBEngine.Services;
@@ -13,16 +12,28 @@ using TBEngine.Types;
 using DH = TBEngine.Utils.DisplayHelper;
 
 namespace GameJam.Views {
+    /// <summary>
+    /// State of main menu
+    /// </summary>
     public sealed class MainMenuState : State {
 
-        private ConfigurationService _config;
-        private ContentService _content;
-        private InputService _input;
-        private StateService _state;
-        private GameConsole _console;
+        // References
+        private readonly ConfigurationService _config;
+        private readonly ContentService _content;
+        private readonly InputService _input;
+        private readonly StateService _state;
+        private readonly GameConsole _console;
 
         private List<Button> _buttons;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="content"><see cref="ContentService"/></param>
+        /// <param name="input"><see cref="InputService"/></param>
+        /// <param name="config"><see cref="ConfigurationService"/></param>
+        /// <param name="state"><see cref="StateService"/></param>
+        /// <param name="console"><see cref="GameConsole"/></param>
         public MainMenuState(ContentService content, InputService input, ConfigurationService config, StateService state, GameConsole console) {
             _console = console;
             _content = content;
@@ -33,6 +44,10 @@ namespace GameJam.Views {
             Initialize(content);
         }
 
+        /// <summary>
+        /// State's initialization
+        /// </summary>
+        /// <param name="content"><see cref="ContentServiceBase"/></param>
         public override void Initialize(ContentServiceBase content) {
             Width = _config.ViewWidth;
             Height = _config.ViewHeight;
@@ -53,10 +68,18 @@ namespace GameJam.Views {
             base.Initialize(content);
         }
 
+        /// <summary>
+        /// State's update
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Update(GameTime time) {
             _buttons.ForEach(button => button.Update(time));
         }
         
+        /// <summary>
+        /// Render state
+        /// </summary>
+        /// <param name="time"><see cref="GameTime"/></param>
         public override void Render(GameTime time) {
             DH.RenderScene(Scene, ( ) => {
                 DH.Raw(_content.TEXUI_MenuBG, 32, 0);

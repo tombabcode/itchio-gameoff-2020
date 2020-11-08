@@ -1,21 +1,30 @@
-﻿using GameJam.Gameplay;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using GameJam.Gameplay;
 using TBEngine.Types;
 using TBEngine.Utils;
 
 using UH = TBEngine.Utils.UtilsHelper;
 
 namespace GameJam.Services {
+    /// <summary>
+    /// Generates world map for levels using cellular automaton cave algorithm
+    /// </summary>
     public static class MapGeneratorService {
 
         private const float _generatorWallRoomRation = .4f;
         private const int _generatorSteps = 6;
 
+        /// <summary>
+        /// Creates map
+        /// </summary>
+        /// <param name="width">Width of the map</param>
+        /// <param name="height">Height of the map</param>
+        /// <returns>Array of tiles</returns>
         public static WorldTile[] GenerateMap(int width, int height) {
             bool[,] cells = new bool[width, height];
 
             // Fill map with 1 or 0 randomly
-            UH.Loops(width, height, (x, y) => cells[x, y] = x == 0 || y == 0 || x == width - 1 || y == height - 1 ? true : RandomService.GetRandomBool(_generatorWallRoomRation));
+            UH.Loops(width, height, (x, y) => cells[x, y] = x == 0 || y == 0 || x == width - 1 || y == height - 1 || RandomService.GetRandomBool(_generatorWallRoomRation));
 
             // Simulation
             for (int i = 0; i < _generatorSteps; i++)
@@ -44,6 +53,11 @@ namespace GameJam.Services {
             return map;
         }
 
+        /// <summary>
+        /// Cellular automaton step
+        /// </summary>
+        /// <param name="original">Original walls map</param>
+        /// <returns>Transformed walls map</returns>
         private static bool[,] SimulationStep(bool[,] original) {
             int width = original.GetLength(0);
             int height = original.GetLength(1);
@@ -62,6 +76,13 @@ namespace GameJam.Services {
             return data;
         }
 
+        /// <summary>
+        /// How many walls are around given point
+        /// </summary>
+        /// <param name="original">Original walls map</param>
+        /// <param name="centerX">Point's X</param>
+        /// <param name="centerY">Point's Y</param>
+        /// <returns>Amount of walls around given point</returns>
         private static int WallCountAround(bool[,] original, int centerX, int centerY) {
             int width = original.GetLength(0);
             int height = original.GetLength(1);
