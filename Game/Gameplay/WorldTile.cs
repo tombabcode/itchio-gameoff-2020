@@ -1,21 +1,16 @@
-﻿namespace GameJam.Gameplay {
-    public sealed class WorldTile {
+﻿using TBEngine.Models.Gameplay;
+using TBEngine.Types;
 
-        public const int SIZE = 480;
+namespace GameJam.Gameplay {
+    public sealed class WorldTile : SquareWallBase {
+
+        public const int SIZE = 224;
 
         public int ID { get; private set; }
-        public int X { get; private set; }
-        public int Y { get; private set; }
-
         public bool IsWall { get; private set; }
 
-        public int DisplayX => X * SIZE;
-        public int DisplayY => Y * SIZE;
-
-        public WorldTile(int id, int x, int y, bool isWall) {
+        public WorldTile(int id, int x, int y, bool isWall, CollisionType[] collisions = null) : base(x, y, SIZE, collisions) {
             ID = id;
-            X = x;
-            Y = y;
             IsWall = isWall;
         }
 

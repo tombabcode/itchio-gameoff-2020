@@ -1,4 +1,6 @@
 ﻿using GameJam.Gameplay;
+using System.Collections.Generic;
+using TBEngine.Types;
 using TBEngine.Utils;
 
 using UH = TBEngine.Utils.UtilsHelper;
@@ -21,7 +23,23 @@ namespace GameJam.Services {
 
             // Set map
             WorldTile[ ] map = new WorldTile[width * height];
-            UH.Loops(width, height, (x, y) => map[y * width + x] = new WorldTile(y * width + x, x, y, cells[x, y]));
+            UH.Loops(width, height, (x, y) => map[y * width + x] = new WorldTile(y * width + x, x, y, cells[x, y], new CollisionType[0]));
+
+            // Set walls' collisions
+            UH.Loops(width, height, (x, y) => {
+                WorldTile tile = map[y * width + x];
+                if (!tile.IsWall)
+                    return;
+
+                List<CollisionType> collision = new List<CollisionType>( );
+
+                if (x - 1 < 0 || !map[y * width + x - 1].IsWall) collision.Add(CollisionType.Left);
+                if (x + 1 >= width || !map[y * width + x + 1].IsWall) collision.Add(CollisionType.Right);
+                if (y - 1 < 0 || !map[(y - 1) * width + x].IsWall) collision.Add(CollisionType.Top);
+                if (y + 1 >= height || !map[(y + 1) * width + x].IsWall) collision.Add(CollisionType.Bottom);
+
+                tile.Collisions = collision.ToArray( );
+            });
 
             return map;
         }

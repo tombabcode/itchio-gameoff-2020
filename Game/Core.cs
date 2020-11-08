@@ -23,7 +23,7 @@ namespace GameJam {
     public sealed class Core : Game {
 
         // Const
-        public const string VERSION = "0.1.3";
+        public const string VERSION = "0.1.4";
 
         // Local
         private readonly GraphicsDeviceManager _deviceMNG;
